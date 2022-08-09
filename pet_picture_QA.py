@@ -12,6 +12,8 @@ import cv2
 import os
 import numpy as np
 from collections import Counter
+import math
+
 
 # Image Class
 # Main purpose for organization and useful for consistency
@@ -21,6 +23,7 @@ class Image:
         self.petName = filename.split('.')[0].split('_')[0]
         self.owner = filename.split('.')[0].split('_')[1]
         self.myImage = cv2.imread(data_dir + '/' + filename)
+        self.myImage = cv2.cvtColor(self.myImage, cv2.COLOR_BGR2RGB) # need to convert from GBR to RGB
         self.height = self.myImage.shape[0]
         self.width = self.myImage.shape[1]
         self.aspectRatio = self.width / self.height
@@ -33,7 +36,8 @@ class Image:
                   'Size': self.totalPixels,
                   'Aspect Ratio': self.aspectRatio,
                   'Pet Name': self.petName,
-                  'Owner Initials': self.owner
+                  'Owner Initials': self.owner,
+                  'Image': self.myImage
                   }
         return myDict
 
@@ -45,8 +49,8 @@ def main():
     #############################
     image_list = [] # holds image objects
     for filename in os.listdir(data_dir):
-        ext = filename.split('.')[1]
-        if ext == 'jpg' or ext == 'jpeg':
+        ext = filename.split('.')[1].lower()
+        if ext == 'jpg' or ext == 'jpeg' or ext == 'png':
             image_list.append(Image(filename))
 
     myDict = {'Name': [],
@@ -55,7 +59,8 @@ def main():
               'Size': [],
               'Aspect Ratio': [],
               'Pet Name': [],
-              'Owner Initials': []
+              'Owner Initials': [],
+              'Image': []
               }
 
     for myImage in image_list:
@@ -69,7 +74,7 @@ def main():
     df.to_csv('out.txt', encoding='utf-8', index=False, sep='\t')
 
 
-    print(df.to_string())
+    print(df)
 
 
 
@@ -90,6 +95,30 @@ def main():
     plt.title('Aspect Ratio vs. Size of Pet Pictures')
     plt.savefig('Aspect Ratio vs. Size.jpg')
     # plt.show()
+
+
+    #############################
+    #          TASK 3           #
+    #############################
+
+    df.sort_values(['Owner Initials', 'Pet Name'],inplace=True)
+    print(df)
+
+    ind = 1
+    plt.figure(figsize=(12, 9), dpi=300)
+    for index,row in df.iterrows():
+        plt.subplot(math.ceil(len(image_list)/5), 5, ind)
+        plt.imshow(row['Image'])
+        plt.title(row['Pet Name'])
+        ind += 1
+    plt.suptitle('Image of All Pets Sorted by Owner Initial')
+    plt.tight_layout()
+    plt.savefig('All Pets.jpg')
+    plt.show()
+
+
+
+
 
 
 
