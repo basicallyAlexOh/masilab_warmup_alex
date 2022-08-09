@@ -10,8 +10,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import cv2
 import os
-
-
+import numpy as np
+from collections import Counter
 
 # Image Class
 # Main purpose for organization and useful for consistency
@@ -43,8 +43,6 @@ def main():
     #############################
     #          TASK 1           #
     #############################
-
-
     image_list = [] # holds image objects
     for filename in os.listdir(data_dir):
         ext = filename.split('.')[1]
@@ -72,6 +70,26 @@ def main():
 
 
     print(df.to_string())
+
+
+
+    #############################
+    #          TASK 2           #
+    #############################
+    size_list = df['Size']
+    ar_list = df['Aspect Ratio']
+    count_list = Counter(zip(size_list,ar_list))
+
+    # https://stackoverflow.com/questions/46700733/how-to-have-scatter-points-become-larger-for-higher-density-using-matplotlib
+    # Allows for coinciding scatter plot points to appear as larger dots on the scatter plot
+    sizes = [20*count_list[(x,y)] for x,y in zip(size_list,ar_list)]
+
+    plt.scatter(size_list, ar_list, s=sizes)
+    plt.xlabel('Size (Pixels)')
+    plt.ylabel('Aspect Ratio (Unitless)')
+    plt.title('Aspect Ratio vs. Size of Pet Pictures')
+    plt.savefig('Aspect Ratio vs. Size.jpg')
+    # plt.show()
 
 
 
