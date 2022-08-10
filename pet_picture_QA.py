@@ -48,6 +48,8 @@ def main():
     #############################
     #          TASK 1           #
     #############################
+    # NOTE: Dataframe will be outputted to a file named petsSortedByPixels.txt
+
     image_list = [] # holds image objects
 
     # Look through directory for files that are images
@@ -76,7 +78,9 @@ def main():
     # Construct DataFrame from Dictionary
     df = pd.DataFrame(myDict)
     df.sort_values(['Size','Pet Name'], inplace=True)
-    df.to_csv('out.txt', encoding='utf-8', index=False, sep='\t')
+
+    # Export to a TXT file without the image column
+    df.loc[:,df.columns != 'Image'].to_csv('petsSortedByPixels.txt', encoding='utf-8', index=False, sep='\t')
 
 
     # print(df)
