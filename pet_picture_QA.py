@@ -29,6 +29,7 @@ class Image:
         self.aspectRatio = self.width / self.height
         self.totalPixels = self.width * self.height
 
+    # Returns a dictionary with all of the information needed for the dataframe
     def getDictionary(self):
         myDict = {'Name': self.name,
                   'Height': self.height,
@@ -48,11 +49,14 @@ def main():
     #          TASK 1           #
     #############################
     image_list = [] # holds image objects
+
+    # Look through directory for files that are images
     for filename in os.listdir(data_dir):
         ext = filename.split('.')[1].lower()
         if ext == 'jpg' or ext == 'jpeg' or ext == 'png':
             image_list.append(Image(filename))
 
+    # Dictionary with empty lists to initialize dataframe
     myDict = {'Name': [],
               'Height': [],
               'Width': [],
@@ -63,18 +67,19 @@ def main():
               'Image': []
               }
 
+    # Add each of the images to the dictionary
     for myImage in image_list:
         tempDict = myImage.getDictionary()
         for key in myDict:
             myDict[key].append(tempDict[key])
 
-
+    # Construct DataFrame from Dictionary
     df = pd.DataFrame(myDict)
     df.sort_values(['Size','Pet Name'], inplace=True)
     df.to_csv('out.txt', encoding='utf-8', index=False, sep='\t')
 
 
-    print(df)
+    # print(df)
 
 
 
@@ -87,6 +92,7 @@ def main():
 
     # https://stackoverflow.com/questions/46700733/how-to-have-scatter-points-become-larger-for-higher-density-using-matplotlib
     # Allows for coinciding scatter plot points to appear as larger dots on the scatter plot
+    # Can differentiate between higher frequency points with this
     sizes = [20*count_list[(x,y)] for x,y in zip(size_list,ar_list)]
 
     plt.scatter(size_list, ar_list, s=sizes)
@@ -102,9 +108,11 @@ def main():
     #############################
 
     df.sort_values(['Owner Initials', 'Pet Name'],inplace=True)
-    print(df)
+    # print(df)
 
     ind = 1
+
+    # Increase Figure Size for higher quality and larger size
     plt.figure(figsize=(12, 9), dpi=300)
     for index,row in df.iterrows():
         plt.subplot(math.ceil(len(image_list)/5), 5, ind)
@@ -114,12 +122,7 @@ def main():
     plt.suptitle('Image of All Pets Sorted by Owner Initial')
     plt.tight_layout()
     plt.savefig('All Pets.jpg')
-    plt.show()
-
-
-
-
-
+    # plt.show()
 
 
 
